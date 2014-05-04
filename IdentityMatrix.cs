@@ -12,7 +12,7 @@
                 this.InternalTwoDimArray[i, i] = 1;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return base.ToString();
         }

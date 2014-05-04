@@ -6,7 +6,7 @@ namespace TheMatrixProject
     {
         private static void Main(string[] args)
         {
-            const int columns = 10;
+            const int columns = 11;
             const int rows = 10;
 
             double[,] array2D = new double[rows, columns];
@@ -21,9 +21,13 @@ namespace TheMatrixProject
 
             Console.WriteLine(mat.ToString());
 
-            mat.Transpose();
+            mat.ReverseRows();
 
-            Console.WriteLine(mat.ToString());  //print the transposed matrix
+            Console.WriteLine(mat.ToString());
+
+            //mat.Transpose();
+
+            //Console.WriteLine(mat.ToString());  //print the transposed matrix
 
             Matrix eye = new IdentityMatrix(10);
 

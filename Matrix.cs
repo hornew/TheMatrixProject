@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TheMatrixProject
 {
     public class Matrix
     {
+        #region |-- Properties --|
+
         public int RowCount { get; set; }
 
         public int ColumnCount { get; set; }
 
         public double[,] InternalTwoDimArray { get; set; }
+
+        #endregion |-- Properties --|
 
         public Matrix()
         {
@@ -32,16 +38,13 @@ namespace TheMatrixProject
                     this.InternalTwoDimArray[i, j] = twoDimArray[i, j];
         }
 
+        ///PROBLEM WITH NON-SQUARE MATRICES: FIX
         /// <summary>
         /// Brute force transpose method. Iterate through each row and column.
         /// </summary>
         public void Transpose()
         {
             double[,] transposedTwoDimArray = new double[this.ColumnCount, this.RowCount];
-
-            for (int i = 0; i < this.RowCount; i++)
-                for (int j = 0; j < this.ColumnCount; j++)
-                    transposedTwoDimArray[i, j] = this.InternalTwoDimArray[j, i];
 
             this.InternalTwoDimArray = transposedTwoDimArray;
         }
@@ -54,15 +57,15 @@ namespace TheMatrixProject
         {
             for (int i = 0; i < this.RowCount; i++)
             {
-                double[] row = GetRowFromMatrix(i);
+                IEnumerable<double> row = GetRowFromMatrix(i);
 
-                Reverse(row, 0, row.Length - 1);
+                row = Reverse(row);
 
                 SetRowInMatrix(row, i);
             }
         }
 
-        public double[] GetRowFromMatrix(int rowIndex)
+        public IEnumerable<double> GetRowFromMatrix(int rowIndex)
         {
             double[] row = new double[this.ColumnCount];
             for (int j = 0; j < this.ColumnCount; j++)
@@ -72,32 +75,35 @@ namespace TheMatrixProject
         }
 
         /// <summary>
-        ///
+        /// Replaces the row in the Matrix specified by rowIndex with the double array "row"
         /// </summary>
         /// <param name="row"></param>
         /// <param name="rowIndex"></param>
-        public void SetRowInMatrix(double[] row, int rowIndex)
+        public void SetRowInMatrix(IEnumerable<double> row, int rowIndex)
         {
             for (int j = 0; j < this.ColumnCount; j++)
-                this.InternalTwoDimArray[rowIndex, j] = row[j];
+                this.InternalTwoDimArray[rowIndex, j] = row.ElementAt(j);
         }
 
         /// <summary>
-        /// Recursive array reverse. Simply swaps elements from each end of the array recursively.
+        /// Replaces the column in the Matrix specified by columnIndex with the double array "column"
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        private void Reverse(double[] row, int start, int end)
+        /// <param name="column"></param>
+        /// <param name="columnIndex"></param>
+        public void SetColumnInMatrix(double[] column, int columnIndex)
         {
-            double temp = row[start];
-            row[start] = row[end];
-            row[end] = temp;
+            for (int i = 0; i < this.RowCount; i++)
+                this.InternalTwoDimArray[i, columnIndex] = column[i];
+        }
 
-            if (start == end || start == end - 1)
-                return;
-
-            Reverse(row, start + 1, end - 1);
+        private IEnumerable<double> Reverse(IEnumerable<double> array)
+        {
+            var count = array.Count();
+            if (count < 2)
+                return array;
+            var midPoint = count >> 1;
+            return Reverse(array.Skip(midPoint).Take(count - midPoint))
+                                    .Concat(Reverse(array.Take(midPoint)));
         }
 
         /// <summary>
